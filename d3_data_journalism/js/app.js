@@ -18,7 +18,7 @@ var height = svgHeight - margin.top - margin.bottom;
 // // Create an SVG wrapper, append an SVG group that will hold our chart,
 // // and shift the latter by left and top margins.
 var svg = d3
-  .select(".chart")
+  .select(".scatter")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
@@ -102,71 +102,74 @@ d3.csv("./d3_data_journalism/data/data.csv").then(data => {
     data.forEach(data => {
       data.poverty = +data.poverty;
       data.obesity= +data.obesity;
-    data.smokes= +data.smokes;
+      data.smokes= +data.smokes;
+    //   console.log(data.poverty)
+    //   console.log(data.obesity)
+    //   console.log(data.smokes)
     });
 
 //       // xLinearScale function above csv import
-//   var xLinearScale = xScale(hairData, chosenXAxis);
+  var xLinearScale = xScale(data, chosenXAxis);
 
 //   // Create y scale function
-//   var yLinearScale = d3.scaleLinear()
-//     .domain([0, d3.max(hairData, d => d.num_hits)])
-//     .range([height, 0]);
+  var yLinearScale = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.obesity)])
+    .range([height, 0]);
 
 //   // Create initial axis functions
-//   var bottomAxis = d3.axisBottom(xLinearScale);
-//   var leftAxis = d3.axisLeft(yLinearScale);
+  var bottomAxis = d3.axisBottom(xLinearScale);
+  var leftAxis = d3.axisLeft(yLinearScale);
 
 //   // append x axis
-//   var xAxis = chartGroup.append("g")
-//     .classed("x-axis", true)
-//     .attr("transform", `translate(0, ${height})`)
-//     .call(bottomAxis);
+  var xAxis = chartGroup.append("g")
+    .classed("x-axis", true)
+    .attr("transform", `translate(0, ${height})`)
+    .call(bottomAxis);
 
 //   // append y axis
-//   chartGroup.append("g")
-//     .call(leftAxis);
+  chartGroup.append("g")
+    .call(leftAxis);
 
 //   // append initial circles
-//   var circlesGroup = chartGroup.selectAll("circle")
-//     .data(hairData)
-//     .join("circle")
-//     .attr("cx", d => xLinearScale(d[chosenXAxis]))
-//     .attr("cy", d => yLinearScale(d.num_hits))
-//     .attr("r", 20)
-//     .attr("fill", "pink")
-//     .attr("opacity", 0.5)
-//     .attr("stroke", "black");
+  var circlesGroup = chartGroup.selectAll("circle")
+    .data(data)
+    .join("circle")
+    .attr("cx", d => xLinearScale(d[chosenXAxis]))
+    .attr("cy", d => yLinearScale(d.obesity))
+    .attr("r", 20)
+    .attr("fill", "blue")
+    .attr("opacity", 0.5)
+    .attr("stroke", "black");
 
 //   // Create group for two x-axis labels
-//   var labelsGroup = chartGroup.append("g")
-//     .attr("transform", `translate(${width / 2}, ${height + 20})`);
+  var labelsGroup = chartGroup.append("g")
+    .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
-//   var hairLengthLabel = labelsGroup.append("text")
-//     .attr("x", 0)
-//     .attr("y", 20)
-//     .attr("value", "hair_length") // value to grab for event listener
-//     .classed("active", true)
-//     .text("Hair Metal Ban Hair Length (inches)");
+  var povertyLabel = labelsGroup.append("text")
+    .attr("x", 0)
+    .attr("y", 20)
+    .attr("value", "poverty") // value to grab for event listener
+    .classed("active", true)
+    .text("% of population in poverty");
 
-//   var albumsLabel = labelsGroup.append("text")
+//   var obesityLabel = labelsGroup.append("text")
 //     .attr("x", 0)
 //     .attr("y", 40)
-//     .attr("value", "num_albums") // value to grab for event listener
+//     .attr("value", "obesity") // value to grab for event listener
 //     .classed("inactive", true)
 //     .text("# of Albums Released");
 
 //   // append y axis
-//   chartGroup.append("text")
-//     .attr("transform", "rotate(-90)")
-//     .attr("y", 0 - margin.left)
-//     .attr("x", 0 - (height / 2))
-//     .attr("dy", "1em")
-//     .classed("axis-text", true)
-//     .text("Number of Billboard 500 Hits");
+  chartGroup.append("text")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 0 - margin.left)
+    .attr("x", 0 - (height / 2))
+    .attr("dy", "1em")
+    .classed("axis-text", true)
+    .text("% of population that is obese");
 
 //   // updateToolTip function above csv import
-//   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+  var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
 //   // x axis labels event listener
 //   labelsGroup.selectAll("text")
