@@ -18,7 +18,7 @@ var height = svgHeight - margin.top - margin.bottom;
 // // Create an SVG wrapper, append an SVG group that will hold our chart,
 // // and shift the latter by left and top margins.
 var svg = d3
-  .select(".scatter")
+  .select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
@@ -77,12 +77,12 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 //     label = "otherTBD:";
 //   }
 
-  var toolTip = d3.tip()
-    .attr("class", "tooltip")
-    .offset([80, -60])
+  // var toolTip = d3.tip()
+  //   .attr("class", "tooltip")
+  //   .offset([80, -60])
     // .html(d => `${d.rockband}<br>${label} ${d[chosenXAxis]}`);
 
-  circlesGroup.call(toolTip);
+  // circlesGroup.call(toolTip);
 
   circlesGroup.on("mouseover", function(data) {
       toolTip.show(data);
@@ -172,47 +172,47 @@ d3.csv("./d3_data_journalism/data/data.csv").then(data => {
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
 //   // x axis labels event listener
-//   labelsGroup.selectAll("text")
-//     .on("click", function() {
-//       // get value of selection
-//       var value = d3.select(this).attr("value");
-//       if (value !== chosenXAxis) {
+  labelsGroup.selectAll("text")
+    .on("click", function() {
+      // get value of selection
+      var value = d3.select(this).attr("value");
+      if (value !== chosenXAxis) {
 
-//         // replaces chosenXAxis with value
-//         chosenXAxis = value;
+        // replaces chosenXAxis with value
+        chosenXAxis = value;
 
-//         // console.log(chosenXAxis)
+        // console.log(chosenXAxis)
 
-//         // functions here found above csv import
-//         // updates x scale for new data
-//         xLinearScale = xScale(hairData, chosenXAxis);
+        // functions here found above csv import
+        // updates x scale for new data
+        xLinearScale = xScale(data, chosenXAxis);
 
-//         // updates x axis with transition
-//         xAxis = renderAxes(xLinearScale, xAxis);
+        // updates x axis with transition
+        xAxis = renderAxes(xLinearScale, xAxis);
 
-//         // updates circles with new x values
-//         circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+        // updates circles with new x values
+        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
 
-//         // updates tooltips with new info
-//         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+        // updates tooltips with new info
+        circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
-//         // changes classes to change bold text
-//         if (chosenXAxis === "num_albums") {
-//           albumsLabel
-//             .classed("active", true)
-//             .classed("inactive", false);
-//           hairLengthLabel
-//             .classed("active", false)
-//             .classed("inactive", true);
-//         }
-//         else {
-//           albumsLabel
-//             .classed("active", false)
-//             .classed("inactive", true);
-//           hairLengthLabel
-//             .classed("active", true)
-//             .classed("inactive", false);
-//         }
-    //   }
-    // });
+        // changes classes to change bold text
+        if (chosenXAxis === "poverty") {
+          povertyLabel
+            .classed("active", true)
+            .classed("inactive", false);
+          povertyLabel
+            .classed("active", false)
+            .classed("inactive", true);
+        }
+        // else {
+        //   obesityLabel
+        //     .classed("active", false)
+        //     .classed("inactive", true);
+        //   povertyLabel
+        //     .classed("active", true)
+        //     .classed("inactive", false);
+        // }
+      }
+    });
 }).catch(error => console.log(error));
