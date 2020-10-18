@@ -1,35 +1,35 @@
-// set SVG height, width, and margins
-let svgWidth = 960;
-let svgHeight = 500;
+var svgWidth = 960;
+var svgHeight = 500;
 
-let margin = {
+var margin = {
   top: 20,
   right: 40,
   bottom: 80,
   left: 100
 };
 
-let width = svgWidth - margin.left - margin.right;
-let height = svgHeight - margin.top - margin.bottom;
+var width = svgWidth - margin.left - margin.right;
+var height = svgHeight - margin.top - margin.bottom;
 
-// // Create an SVG wrapper, append an SVG group that will hold our chart
-let svg = d3
+// Create an SVG wrapper, append an SVG group that will hold our chart,
+// and shift the latter by left and top margins.
+var svg = d3
   .select("#scatter")
   .append("svg")
   .attr("width", svgWidth)
   .attr("height", svgHeight);
 
-// // Append an SVG group
-let chartGroup = svg.append("g")
+// Append an SVG group
+var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
-// // Initial Params
-let chosenXAxis = "poverty";
+// Initial Params
+var chosenXAxis = "poverty";
 
-// // function used for updating x-scale var upon click on axis label
+// function used for updating x-scale var upon click on axis label
 function xScale(censusData, chosenXAxis) {
-//   // create scales
-  let xLinearScale = d3.scaleLinear()
+  // create scales
+  var xLinearScale = d3.scaleLinear()
     .domain([d3.min(censusData, d => d[chosenXAxis]) * 0.8,
       d3.max(censusData, d => d[chosenXAxis]) * 1.2
     ])
@@ -39,9 +39,9 @@ function xScale(censusData, chosenXAxis) {
 
 }
 
-// // function used for updating xAxis var upon click on axis label
+// function used for updating xAxis var upon click on axis label
 function renderAxes(newXScale, xAxis) {
-  let bottomAxis = d3.axisBottom(newXScale);
+  var bottomAxis = d3.axisBottom(newXScale);
 
   xAxis.transition()
     .duration(1000)
@@ -50,8 +50,8 @@ function renderAxes(newXScale, xAxis) {
   return xAxis;
 }
 
-// // function used for updating circles group with a transition to
-// // new circles
+// function used for updating circles group with a transition to
+// new circles
 function renderCircles(circlesGroup, newXScale, chosenXAxis) {
 
   circlesGroup.transition()
@@ -61,23 +61,23 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
   return circlesGroup;
 }
 
-// // function used for updating circles group with new tooltip
+// function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, circlesGroup) {
 
-  let label;
+  var label;
 
-  if (chosenXAxis === "poverty") {
-    label = "Poverty:";
+  if (chosenXAxis === "hair_length") {
+    label = "Hair Length:";
   }
   else {
-    label = "Median Age:";
+    label = "# of Albums:";
   }
 
-  let toolTip = d3.tip()
+  var toolTip = d3.tip()
     .attr("class", "tooltip")
     .offset([80, -60])
-    .html(d => `${d.state}<br>${label} ${d[chosenXAxis]}`)
- 
+    .html(d => `${d.rockband}<br>${label} ${d[chosenXAxis]}`);
+
   circlesGroup.call(toolTip);
 
   circlesGroup.on("mouseover", function(data) {
@@ -91,56 +91,51 @@ function updateToolTip(chosenXAxis, circlesGroup) {
   return circlesGroup;
 }
 
-// get data from CSV
-d3.csv("./d3_data_journalism/data/data.csv").then(censusData => {
+// Retrieve data from the CSV file and execute everything below
+d3.csv("assets/data/data.csv").then(censusData => {
     console.log(censusData);
-    // parse data
-    censusData.forEach(data => {
-      data.poverty = +data.poverty;
-      data.obesity= +data.obesity;
-      data.age = +data.age;
-      data.smokes= +data.smokes;
-    //   console.log(data.poverty)
-    //   console.log(data.obesity)
-    //   console.log(data.age)
-    //   console.log(data.smokes)
-    });
+  // parse data
+  censusData.forEach(data => {
+    data.poverty = +data.poverty;
+    data.obesity = +data.obesity;
+    data.healthcare= +data.healthcare;
+  });
 
-// xLinearScale function above csv import
+  // xLinearScale function above csv import
   var xLinearScale = xScale(censusData, chosenXAxis);
 
-// Create y scale function
+  // Create y scale function
   var yLinearScale = d3.scaleLinear()
     .domain([0, d3.max(censusData, d => d.obesity)])
     .range([height, 0]);
 
-// Create initial axis functions
+  // Create initial axis functions
   var bottomAxis = d3.axisBottom(xLinearScale);
   var leftAxis = d3.axisLeft(yLinearScale);
 
-// append x axis
+  // append x axis
   var xAxis = chartGroup.append("g")
     .classed("x-axis", true)
     .attr("transform", `translate(0, ${height})`)
     .call(bottomAxis);
 
-// append y axis
+  // append y axis
   chartGroup.append("g")
     .call(leftAxis);
 
-//  append initial circles
+  // append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
     .data(censusData)
-    .join("circle")
+    .enter()
+    .append("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
     .attr("cy", d => yLinearScale(d.obesity))
     .attr("r", 20)
     .attr("fill", "blue")
     .attr("opacity", 0.5)
-    .attr("stroke", "black")
- ;
+    .attr("stroke", "black");
 
-//   // Create group for two x-axis labels
+  // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
@@ -149,28 +144,28 @@ d3.csv("./d3_data_journalism/data/data.csv").then(censusData => {
     .attr("y", 20)
     .attr("value", "poverty") // value to grab for event listener
     .classed("active", true)
-    .text("% of population in poverty");
+    .text("poverty");
 
-  var ageLabel = labelsGroup.append("text")
+  var albumsLabel = labelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 40)
-    .attr("value", "age") // value to grab for event listener
+    .attr("value", "healthcare") // value to grab for event listener
     .classed("inactive", true)
-    .text("Median Age");
+    .text("healthcare");
 
-//   // append y axis
+  // append y axis
   chartGroup.append("text")
     .attr("transform", "rotate(-90)")
     .attr("y", 0 - margin.left)
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .classed("axis-text", true)
-    .text("% of population that is obese");
+    .text("obesity");
 
-//   // updateToolTip function above csv import
+  // updateToolTip function above csv import
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
-//   // x axis labels event listener
+  // x axis labels event listener
   labelsGroup.selectAll("text")
     .on("click", function() {
       // get value of selection
@@ -200,7 +195,7 @@ d3.csv("./d3_data_journalism/data/data.csv").then(censusData => {
           povertyLabel
             .classed("active", true)
             .classed("inactive", false);
-          ageLabel
+          healthcareLabel
             .classed("active", false)
             .classed("inactive", true);
         }
@@ -208,7 +203,7 @@ d3.csv("./d3_data_journalism/data/data.csv").then(censusData => {
           povertyLabel
             .classed("active", false)
             .classed("inactive", true);
-          ageLabel
+          healthcareLabel
             .classed("active", true)
             .classed("inactive", false);
         }
