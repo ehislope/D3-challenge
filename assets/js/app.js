@@ -66,27 +66,28 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
   var label;
 
-  if (chosenXAxis === "hair_length") {
-    label = "Hair Length:";
+  if (chosenXAxis === "poverty") {
+    label = "Poverty:";
   }
   else {
-    label = "# of Albums:";
+    label = "Healthcare:";
   }
 
-  var toolTip = d3.tip()
-    .attr("class", "tooltip")
-    .offset([80, -60])
-    .html(d => `${d.rockband}<br>${label} ${d[chosenXAxis]}`);
+//   var toolTip = d3.tip()
+//     .classed("tooltip", true)
+//     .offset([80, -60])
+//     .html(data => `${d.state}<br>${label} ${d[chosenXAxis]}`);
 
-  circlesGroup.call(toolTip);
 
-  circlesGroup.on("mouseover", function(data) {
-      toolTip.show(data);
-    })
-    // onmouseout event
-    .on("mouseout", function(data) {
-      toolTip.hide(data);
-    });
+//   circlesGroup.call(toolTip);
+
+//   circlesGroup.on("mouseover", function(data) {
+//       toolTip.show(data);
+//     })
+//     // onmouseout event
+//     .on("mouseout", function(censusData) {
+//       toolTip.hide(censusData);
+//     });
 
   return circlesGroup;
 }
@@ -133,11 +134,13 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .attr("r", 20)
     .attr("fill", "blue")
     .attr("opacity", 0.5)
-    .attr("stroke", "black");
+    .attr("stroke", "blue")
+
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width / 2}, ${height + 20})`);
+
 
   var povertyLabel = labelsGroup.append("text")
     .attr("x", 0)
@@ -146,7 +149,7 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .classed("active", true)
     .text("poverty");
 
-  var albumsLabel = labelsGroup.append("text")
+  var healthcareLabel = labelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 40)
     .attr("value", "healthcare") // value to grab for event listener
