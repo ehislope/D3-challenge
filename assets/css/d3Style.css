@@ -40,12 +40,12 @@
   margin: 0;
 }
 
-.d3-tip {
+.toolTip {
   padding: 6px;
   font-size: 12px;
   line-height: 1;
   line-height: 1.5em;
-  color: #fff;
+  color: rgb(255, 255, 255);
   text-align: center;
   text-transform: capitalize;
   background: rgba(0, 0, 0, 0.8);

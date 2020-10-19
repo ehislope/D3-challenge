@@ -61,36 +61,36 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
   return circlesGroup;
 }
 
+
+
+
 // function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis, circlesGroup) {
 
-  var label;
+    var label;
+  
+    if (chosenXAxis === "poverty") {
+      label = "In Poverty:";
+    }
+    else {
+      label = "Lacks Healthcare:";
+    }
+  
+    var toolTip = d3.tip()
+        .attr("class", "toolTip")
+        .offset([80, -60])
+        .html(d => (`${d.state}<br>${label} ${d[chosenXAxis]}%`));
+    circlesGroup.call(toolTip);
 
-  if (chosenXAxis === "poverty") {
-    label = "Poverty:";
-  }
-  else {
-    label = "Healthcare:";
-  }
-
-//   var toolTip = d3.tip()
-//     .classed("tooltip", true)
-//     .offset([80, -60])
-//     .html(data => `${d.state}<br>${label} ${d[chosenXAxis]}`);
-
-
-//   circlesGroup.call(toolTip);
-
-//   circlesGroup.on("mouseover", function(data) {
-//       toolTip.show(data);
-//     })
-//     // onmouseout event
-//     .on("mouseout", function(censusData) {
-//       toolTip.hide(censusData);
-//     });
-
-  return circlesGroup;
-}
+    circlesGroup.on("mouseover", function(data) {
+        toolTip.show(data);
+        })
+        // onmouseout event
+        .on("mouseout", function(data) {
+        toolTip.hide(data);
+        });
+    return circlesGroup;
+  };
 
 // Retrieve data from the CSV file and execute everything below
 d3.csv("assets/data/data.csv").then(censusData => {
@@ -136,7 +136,15 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .attr("fill", "blue")
     .attr("opacity", 0.5)
     .attr("stroke", "black")
+
+  var labelsGroup = chartGroup.selectAll("stateText")
+    .data(censusData)
+    .join("text")
+    .classed("stateText", true)
+    .attr(d => (d.abbr))
     
+
+
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -171,6 +179,7 @@ d3.csv("assets/data/data.csv").then(censusData => {
 
   // x axis labels event listener
   labelsGroup.selectAll("text")
+
     .on("click", function() {
       // get value of selection
       var value = d3.select(this).attr("value");
@@ -179,7 +188,6 @@ d3.csv("assets/data/data.csv").then(censusData => {
         // replaces chosenXAxis with value
         chosenXAxis = value;
 
-        // console.log(chosenXAxis)
 
         // functions here found above csv import
         // updates x scale for new data
