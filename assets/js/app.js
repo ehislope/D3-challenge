@@ -100,6 +100,7 @@ d3.csv("assets/data/data.csv").then(censusData => {
     data.poverty = +data.poverty;
     data.obesity = +data.obesity;
     data.healthcare= +data.healthcare;
+    data.smokes = +data.smokes;
   });
 
   // xLinearScale function above csv import
@@ -107,7 +108,7 @@ d3.csv("assets/data/data.csv").then(censusData => {
 
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(censusData, d => d.obesity)])
+    .domain([0, d3.max(censusData, d => d.smokes)])
     .range([height, 0]);
 
   // Create initial axis functions
@@ -130,12 +131,12 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .enter()
     .append("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
-    .attr("cy", d => yLinearScale(d.obesity))
+    .attr("cy", d => yLinearScale(d.smokes))
     .attr("r", 20)
     .attr("fill", "blue")
     .attr("opacity", 0.5)
-    .attr("stroke", "blue")
-
+    .attr("stroke", "black")
+    
 
   // Create group for two x-axis labels
   var labelsGroup = chartGroup.append("g")
@@ -163,7 +164,7 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .classed("axis-text", true)
-    .text("obesity");
+    .text("smokes");
 
   // updateToolTip function above csv import
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
