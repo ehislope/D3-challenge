@@ -11,8 +11,7 @@ var margin = {
 var width = svgWidth - margin.left - margin.right;
 var height = svgHeight - margin.top - margin.bottom;
 
-// Create an SVG wrapper, append an SVG group that will hold our chart,
-// and shift the latter by left and top margins.
+// Create an SVG wrapper
 var svg = d3
   .select("#scatter")
   .append("svg")
@@ -108,7 +107,7 @@ d3.csv("assets/data/data.csv").then(censusData => {
 
   // Create y scale function
   var yLinearScale = d3.scaleLinear()
-    .domain([0, d3.max(censusData, d => d.smokes)])
+    .domain([0, d3.max(censusData, d => d.obesity)])
     .range([height, 0]);
 
   // Create initial axis functions
@@ -125,30 +124,32 @@ d3.csv("assets/data/data.csv").then(censusData => {
   chartGroup.append("g")
     .call(leftAxis);
 
-  // append initial circles
+
+    // append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
     .data(censusData)
-    .enter()
-    .append("circle")
+    .join("circle")
     .attr("cx", d => xLinearScale(d[chosenXAxis]))
-    .attr("cy", d => yLinearScale(d.smokes))
+    .attr("cy", d => yLinearScale(d.obesity))
     .attr("r", 20)
     .attr("fill", "blue")
     .attr("opacity", 0.5)
     .attr("stroke", "black")
 
-  var labelsGroup = chartGroup.selectAll("stateText")
+
+    var labelsGroup = chartGroup.selectAll("stateText")
     .data(censusData)
+    .classed(".stateText", true)
     .join("text")
-    .classed("stateText", true)
-    .attr(d => (d.abbr))
-    
-
-
+      .attr("x", d => xLinearScale(d[chosenXAxis]))
+      .attr("y", d => yLinearScale(d.obesity))
+      .text(d => d.abbr);
+ 
 
   // Create group for two x-axis labels
-  var labelsGroup = chartGroup.append("g")
-    .attr("transform", `translate(${width / 2}, ${height + 20})`);
+  // var labelsGroup = chartGroup.append("g")
+  //   .attr("transform", `translate(${width / 2}, ${height + 20})`);
+
 
 
   var povertyLabel = labelsGroup.append("text")
@@ -172,7 +173,7 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .classed("axis-text", true)
-    .text("smokes");
+    .text("obesity");
 
   // updateToolTip function above csv import
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
