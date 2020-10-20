@@ -29,8 +29,8 @@ var chosenXAxis = "poverty";
 function xScale(censusData, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-    .domain([d3.min(censusData, d => d[chosenXAxis]) * 0.8,
-      d3.max(censusData, d => d[chosenXAxis]) * 1.2
+    .domain([d3.min(censusData, d => d[chosenXAxis]) * .9,
+      d3.max(censusData, d => d[chosenXAxis]) * 1.5
     ])
     .range([0, width]);
 
@@ -59,8 +59,6 @@ function renderCircles(circlesGroup, newXScale, chosenXAxis) {
 
   return circlesGroup;
 }
-
-
 
 
 // function used for updating circles group with new tooltip
@@ -99,7 +97,6 @@ d3.csv("assets/data/data.csv").then(censusData => {
     data.poverty = +data.poverty;
     data.obesity = +data.obesity;
     data.healthcare= +data.healthcare;
-    data.smokes = +data.smokes;
   });
 
   // xLinearScale function above csv import
@@ -136,19 +133,20 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .attr("opacity", 0.5)
     .attr("stroke", "black")
 
-
-    var labelsGroup = chartGroup.selectAll("stateText")
-    .data(censusData)
-    .classed(".stateText", true)
-    .join("text")
-      .attr("x", d => xLinearScale(d[chosenXAxis]))
-      .attr("y", d => yLinearScale(d.obesity))
-      .text(d => d.abbr);
+// create circle labels
+    // var labelsGroup = chartGroup.selectAll("stateText")
+    // .data(censusData)
+    // .classed(".stateText", true)
+    // .join("text")
+    //   .attr("x", d => xLinearScale(d[chosenXAxis]))
+    //   .attr("y", d => yLinearScale(d.obesity))
+    //   .attr("text-anchor", "middle")
+    //   .text(d => d.abbr);
  
 
   // Create group for two x-axis labels
-  // var labelsGroup = chartGroup.append("g")
-  //   .attr("transform", `translate(${width / 2}, ${height + 20})`);
+  var labelsGroup = chartGroup.append("g")
+    .attr("transform", `translate(${width / 2}, ${height + 20})`);
 
 
 
@@ -199,7 +197,7 @@ d3.csv("assets/data/data.csv").then(censusData => {
 
         // updates circles with new x values
         circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
-
+ 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
 
