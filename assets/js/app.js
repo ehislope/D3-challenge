@@ -29,8 +29,8 @@ var chosenXAxis = "poverty";
 function xScale(censusData, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
-    .domain([d3.min(censusData, d => d[chosenXAxis]) * .9,
-      d3.max(censusData, d => d[chosenXAxis]) * 1.5
+    .domain([d3.min(censusData, d => d[chosenXAxis]) * .8,
+      d3.max(censusData, d => d[chosenXAxis]) * 1.2
     ])
     .range([0, width]);
 
@@ -134,14 +134,14 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .attr("stroke", "black")
 
 // create circle labels
-    // var labelsGroup = chartGroup.selectAll("stateText")
-    // .data(censusData)
-    // .classed(".stateText", true)
-    // .join("text")
-    //   .attr("x", d => xLinearScale(d[chosenXAxis]))
-    //   .attr("y", d => yLinearScale(d.obesity))
-    //   .attr("text-anchor", "middle")
-    //   .text(d => d.abbr);
+    var labelsGroup = chartGroup.selectAll("stateText")
+    .data(censusData)
+    .classed(".stateText", true)
+    .join("text")
+      .attr("x", d => xLinearScale(d[chosenXAxis]))
+      .attr("y", d => yLinearScale(d.obesity))
+      .attr("text-anchor", "middle")
+      .text(d => d.abbr);
  
 
   // Create group for two x-axis labels
@@ -155,14 +155,14 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .attr("y", 20)
     .attr("value", "poverty") // value to grab for event listener
     .classed("active", true)
-    .text("poverty");
+    .text("% in Poverty");
 
   var healthcareLabel = labelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 40)
     .attr("value", "healthcare") // value to grab for event listener
     .classed("inactive", true)
-    .text("healthcare");
+    .text("% Lacks Healthcare");
 
   // append y axis
   chartGroup.append("text")
@@ -171,7 +171,7 @@ d3.csv("assets/data/data.csv").then(censusData => {
     .attr("x", 0 - (height / 2))
     .attr("dy", "1em")
     .classed("axis-text", true)
-    .text("obesity");
+    .text("% Obesity");
 
   // updateToolTip function above csv import
   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
